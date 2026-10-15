@@ -2,16 +2,29 @@
 
 declare(strict_types=1);
 
-$message = "Hi There! Let's start!";
-?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My first Docker app</title>
-</head>
-<body>
-    <h1><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></h1>
-</body>
-</html>
+use App\Controller\DefaultController;
+use App\Controller\LoopController;
+use App\Controller\ProfileController;
+use App\Controller\SecurityController;
+use App\Routing;
+
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+$routing = new Routing();
+
+$routing->get('/', DefaultController::class, 'index');
+$routing->get('/pricing', DefaultController::class, 'pricing');
+$routing->get('/loops', LoopController::class, 'index');
+$routing->get('/loops/{id}', LoopController::class, 'show');
+$routing->get('/login', SecurityController::class, 'login');
+$routing->get('/register', SecurityController::class, 'register');
+$routing->get('/profile', ProfileController::class, 'index');
+
+$routeFound = $routing->dispatch(
+    $_SERVER['REQUEST_METHOD'],
+    $_SERVER['REQUEST_URI'],
+);
+
+if (!$routeFound) {
+    (new DefaultController())->notFound();
+}
