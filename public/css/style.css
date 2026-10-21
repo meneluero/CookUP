@@ -1,0 +1,467 @@
+/* ==========================================================
+   CookUP+ - glowny arkusz stylow
+   Na razie ostylowany jest tylko widok /loops (Loops & Sample Vault).
+   Pisane mobile first: najpierw telefon, potem wieksze ekrany w media query.
+   ========================================================== */
+
+/* ---------- 1. Zmienne CSS (tokeny projektu) ----------
+   Wszystkie kolory, odstepy i zaokraglenia trzymamy tutaj,
+   a nizej juz tylko uzywamy var(). Nazwy sa od roli, nie od koloru. */
+:root {
+  --color-brand: #ffffff;          /* glowne akcje - biale "pigulki" z figmy */
+  --color-on-brand: #111111;       /* tekst na bialym przycisku */
+  --color-text: #f5f5f5;
+  --color-muted: #8c8c8c;
+  --color-surface: #1a1a1a;        /* karty, panele */
+  --color-surface-raised: #262626; /* np. tagi i przyciski na karcie */
+  --color-background: #0f0f0f;
+  --color-border: #2b2b2b;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+
+  --radius: 1rem;
+  --radius-pill: 999px;
+
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Consolas, monospace;
+}
+
+/* ---------- 4. Box model ----------
+   Dzieki temu width liczy sie razem z paddingiem i borderem. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ---------- 5. Kolor, tekst i stany ---------- */
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* naglowek strony skaluje sie plynnie z szerokoscia ekranu */
+h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+/* male naglowki sekcji w stylu "monospace caps" jak w projekcie */
+h2 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+a {
+  color: var(--color-brand);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* fokusu nie usuwamy - uzytkownik klawiatury musi widziec gdzie jest */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-brand) 45%, white);
+  outline-offset: 3px;
+}
+
+/* label ukryty dla oka, ale czytnik ekranu dalej go przeczyta */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Przyciski ---------- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  text-decoration: none;
+  background-color: var(--color-surface-raised);
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--color-muted);
+}
+
+/* biala wersja - glowna akcja na ekranie */
+.button--primary {
+  color: var(--color-on-brand);
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+/* ---------- Pola formularza ---------- */
+input[type="search"],
+select {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  color: var(--color-text);
+  background-color: var(--color-surface-raised);
+}
+
+/* ---------- Naglowek (na telefonie u gory, na desktopie sidebar) ---------- */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.logo strong {
+  font-size: 1.25rem;
+}
+
+.logo small {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* wyszukiwarka zajmuje caly wiersz na malym ekranie */
+.search {
+  display: flex;
+  gap: var(--space-1);
+  order: 3;
+  width: 100%;
+}
+
+.main-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-nav a {
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+/* aktywna zakladka - wybieramy ja po atrybucie aria-current */
+.main-nav a[aria-current="page"] {
+  color: var(--color-on-brand);
+  background-color: var(--color-brand);
+}
+
+/* ---------- Glowna zawartosc ---------- */
+.page {
+  width: min(100% - 2rem, 72rem);
+  margin-inline: auto;
+  padding-block: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.page-intro p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-muted);
+}
+
+/* wspolny wyglad paneli (filtry, promo) */
+.panel {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+/* ---------- Filtry ---------- */
+.filters-form {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* gatunki jako "pigulki" - flexbox bo to jeden rzad ktory sie zawija */
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.genres legend {
+  margin-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.chip {
+  position: relative;
+  padding: 0.25rem var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* sam radio chowamy, klikamy w cala pigulke (label) */
+.chip input {
+  position: absolute;
+  opacity: 0;
+}
+
+/* zaznaczona pigulka robi sie biala */
+.chip:has(input:checked) {
+  color: var(--color-on-brand);
+  background-color: var(--color-brand);
+}
+
+/* radio jest niewidoczny, wiec fokus pokazujemy na pigulce */
+.chip:has(input:focus-visible) {
+  outline: 3px solid color-mix(in srgb, var(--color-brand) 45%, white);
+  outline-offset: 3px;
+}
+
+/* ---------- Lista petli ---------- */
+.loop-list {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.loop-card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.loop-card h3 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.loop-card h3 a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.loop-card header p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+/* BPM, tonacja, gatunek itd. jako male tagi */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 0.125rem var(--space-1);
+  border-radius: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background-color: var(--color-surface-raised);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ---------- Promo (Pro Pack) ---------- */
+.promo h2 {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text);
+}
+
+.promo p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+/* ---------- Odtwarzacz na dole ----------
+   sticky - zostaje przyklejony do dolu podczas przewijania */
+.player {
+  position: sticky;
+  bottom: 0;
+  padding: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.player-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.player-controls p {
+  margin: 0;
+}
+
+.track-info {
+  display: grid;
+  width: 100%;
+}
+
+.track-info small,
+.copyright {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.copyright {
+  margin: var(--space-1) 0 0;
+}
+
+/* =========================================================
+   7. Wieksze ekrany - rozszerzamy uklad dopiero gdy jest miejsce
+   ========================================================= */
+
+/* tablet (768px) */
+@media (min-width: 48rem) {
+  /* filtry w kilku kolumnach, gatunki na cala szerokosc */
+  .filters-form {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    align-items: end;
+  }
+
+  .filters-form .genres {
+    grid-column: 1 / -1;
+  }
+
+  /* karta petli w jednym rzedzie: tytul | tagi | akcje */
+  .loop-card {
+    grid-template-columns: 2fr 1.5fr auto;
+    align-items: center;
+  }
+
+  /* na wiekszym ekranie tytul utworu nie musi zajmowac calej linii */
+  .track-info {
+    width: auto;
+    margin-right: auto;
+  }
+}
+
+/* desktop (1024px+) - naglowek staje sie sidebarem po lewej jak w figmie */
+@media (min-width: 64rem) {
+  body {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    grid-template-rows: 1fr auto;
+    min-height: 100vh;
+  }
+
+  .site-header {
+    grid-row: 1;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    border-bottom: 0;
+    border-right: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: auto;
+  }
+
+  .search {
+    order: 0;
+  }
+
+  .main-nav ul {
+    flex-direction: column;
+  }
+
+  .page {
+    grid-column: 2;
+  }
+
+  /* odtwarzacz rozciagniety na obie kolumny */
+  .player {
+    grid-column: 1 / -1;
+  }
+}

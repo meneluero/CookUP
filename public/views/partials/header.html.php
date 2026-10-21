@@ -7,19 +7,19 @@ $navItems = [
     'pricing' => ['label' => 'Pricing', 'href' => '/pricing'],
 ];
 ?>
-<header>
-    <a href="/">
+<header class="site-header">
+    <a href="/" class="logo">
         <strong>CookUP+</strong>
         <small>Studio workstation v2.4</small>
     </a>
 
-    <form action="/loops" method="get" role="search">
-        <label for="site-search">Search loops</label>
+    <form action="/loops" method="get" role="search" class="search">
+        <label for="site-search" class="visually-hidden">Search loops</label>
         <input type="search" id="site-search" name="q" placeholder="Search loops, one-shots, stem packs...">
-        <button type="submit">Search</button>
+        <button type="submit" class="button">Search</button>
     </form>
 
-    <nav aria-label="Main navigation">
+    <nav aria-label="Main navigation" class="main-nav">
         <ul>
             <?php foreach ($navItems as $key => $item): ?>
                 <li>
@@ -31,5 +31,5 @@ $navItems = [
         </ul>
     </nav>
 
-    <a href="/login">Sign in</a>
+    <a href="/login" class="button button--primary">Sign in</a>
 </header>

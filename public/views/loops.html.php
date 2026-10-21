@@ -4,86 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <?php require __DIR__ . '/partials/header.html.php'; ?>
 
-    <main>
-        <h1>Browse loops</h1>
-        <p><?= $loopCount ?> curated stems &amp; loops</p>
+    <main class="page">
+        <div class="page-intro">
+            <h1>Browse loops</h1>
+            <p><?= $loopCount ?> curated stems &amp; loops</p>
+        </div>
 
-        <section aria-labelledby="filters-heading">
+        <section aria-labelledby="filters-heading" class="panel">
             <h2 id="filters-heading">Filters</h2>
-            <form action="/loops" method="get">
-                <label for="loop-search">Search by loop name, producer handle, instrument or vibe</label>
-                <input type="search" id="loop-search" name="q">
+            <form action="/loops" method="get" class="filters-form">
+                <div class="field">
+                    <label for="loop-search">Search by loop name, producer handle, instrument or vibe</label>
+                    <input type="search" id="loop-search" name="q">
+                </div>
 
-                <label for="bpm">BPM</label>
-                <select id="bpm" name="bpm">
-                    <option value="">Any</option>
-                    <option value="80-100">80–100</option>
-                    <option value="100-120">100–120</option>
-                    <option value="120-140">120–140</option>
-                    <option value="140-160">140–160</option>
-                </select>
+                <div class="field">
+                    <label for="bpm">BPM</label>
+                    <select id="bpm" name="bpm">
+                        <option value="">Any</option>
+                        <option value="80-100">80–100</option>
+                        <option value="100-120">100–120</option>
+                        <option value="120-140">120–140</option>
+                        <option value="140-160">140–160</option>
+                    </select>
+                </div>
 
-                <label for="key">Key</label>
-                <select id="key" name="key">
-                    <option value="">All keys</option>
-                    <option value="minor">Minor</option>
-                    <option value="major">Major</option>
-                </select>
+                <div class="field">
+                    <label for="key">Key</label>
+                    <select id="key" name="key">
+                        <option value="">All keys</option>
+                        <option value="minor">Minor</option>
+                        <option value="major">Major</option>
+                    </select>
+                </div>
 
-                <label for="sort">Sort</label>
-                <select id="sort" name="sort">
-                    <option value="latest">Latest drops</option>
-                    <option value="trending">Trending</option>
-                    <option value="plays">Most played</option>
-                </select>
+                <div class="field">
+                    <label for="sort">Sort</label>
+                    <select id="sort" name="sort">
+                        <option value="latest">Latest drops</option>
+                        <option value="trending">Trending</option>
+                        <option value="plays">Most played</option>
+                    </select>
+                </div>
 
-                <fieldset>
+                <fieldset class="genres">
                     <legend>Genre</legend>
                     <?php foreach ($genres as $index => $genre): ?>
-                        <label>
+                        <label class="chip">
                             <input type="radio" name="genre" value="<?= htmlspecialchars($genre) ?>"<?= $index === 0 ? ' checked' : '' ?>>
                             <?= htmlspecialchars($genre) ?>
                         </label>
                     <?php endforeach; ?>
                 </fieldset>
 
-                <button type="submit">Apply filters</button>
+                <button type="submit" class="button button--primary">Apply filters</button>
             </form>
         </section>
 
         <section aria-labelledby="results-heading">
             <h2 id="results-heading">Results</h2>
-            <ul>
+            <ul class="loop-list">
                 <?php foreach ($loops as $loop): ?>
                     <li>
-                        <article>
+                        <article class="loop-card">
                             <header>
                                 <h3><a href="/loops/<?= $loop['id'] ?>"><?= htmlspecialchars($loop['title']) ?></a></h3>
                                 <p>prod. <?= htmlspecialchars($loop['producer']) ?></p>
                             </header>
-                            <ul>
+                            <ul class="tags">
                                 <li><?= $loop['bpm'] ?> BPM</li>
                                 <li><?= htmlspecialchars($loop['key']) ?></li>
                                 <li><?= htmlspecialchars($loop['genre']) ?></li>
                                 <li><?= $loop['bars'] ?> bars</li>
                             </ul>
-                            <button type="button">Play</button>
-                            <button type="button">Save</button>
-                            <a href="/loops/<?= $loop['id'] ?>">View stems</a>
+                            <div class="actions">
+                                <button type="button" class="button button--primary">Play</button>
+                                <button type="button" class="button">Save</button>
+                                <a href="/loops/<?= $loop['id'] ?>" class="button">View stems</a>
+                            </div>
                         </article>
                     </li>
                 <?php endforeach; ?>
             </ul>
         </section>
 
-        <aside aria-labelledby="pack-heading">
+        <aside aria-labelledby="pack-heading" class="panel promo">
             <h2 id="pack-heading">CookUP Pro Pack Vol. 03</h2>
             <p>Lossless 32-bit stems + MIDI patterns included.</p>
-            <a href="/pricing">Download pack</a>
+            <a href="/pricing" class="button button--primary">Download pack</a>
         </aside>
     </main>
 
