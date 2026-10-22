@@ -136,6 +136,11 @@ select:focus-visible {
   border-color: var(--color-brand);
 }
 
+/* na bialym przycisku zmiana ramki nie bylaby widac, wiec lekko go przyciemniamy */
+.button--primary:hover {
+  background-color: color-mix(in srgb, var(--color-brand) 85%, black);
+}
+
 /* ---------- Pola formularza ---------- */
 input[type="search"],
 select {
@@ -202,6 +207,11 @@ select {
   border-radius: var(--radius-pill);
   color: var(--color-muted);
   text-decoration: none;
+}
+
+.main-nav a:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-raised);
 }
 
 /* aktywna zakladka - wybieramy ja po atrybucie aria-current */
@@ -292,6 +302,10 @@ select {
   opacity: 0;
 }
 
+.chip:hover {
+  border-color: var(--color-muted);
+}
+
 /* zaznaczona pigulka robi sie biala */
 .chip:has(input:checked) {
   color: var(--color-on-brand);
@@ -320,6 +334,16 @@ select {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
+}
+
+/* podswietlenie wiersza jak w figmie - wiadomo nad czym jest myszka */
+.loop-card:hover {
+  background-color: var(--color-surface-raised);
+}
+
+/* to samo gdy chodzimy tabem po przyciskach w srodku karty */
+.loop-card:focus-within {
+  border-color: var(--color-muted);
 }
 
 .loop-card h3 {
