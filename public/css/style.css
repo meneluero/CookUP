@@ -216,6 +216,7 @@ select {
   margin-inline: auto;
   padding-block: var(--space-4);
   display: grid;
+  align-content: start; /* bez tego wiersze grida rozciagaly sie na cala wysokosc i robily dziury */
   gap: var(--space-3);
 }
 
