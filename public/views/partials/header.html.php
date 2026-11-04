@@ -32,4 +32,5 @@ $navItems = [
     </nav>
 
     <a href="/login" class="button button--primary">Sign in</a>
+    <a href="/register" class="button">Register</a>
 </header>
