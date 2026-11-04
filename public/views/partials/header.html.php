@@ -1,12 +1,3 @@
-<?php
-$activeNav = $activeNav ?? '';
-$navItems = [
-    'home' => ['label' => 'Home', 'href' => '/'],
-    'loops' => ['label' => 'Loops', 'href' => '/loops'],
-    'profile' => ['label' => 'Profile', 'href' => '/profile'],
-    'pricing' => ['label' => 'Pricing', 'href' => '/pricing'],
-];
-?>
 <header class="site-header">
     <a href="/" class="logo">
         <strong>CookUP+</strong>
@@ -19,17 +10,7 @@ $navItems = [
         <button type="submit" class="button">Search</button>
     </form>
 
-    <nav aria-label="Main navigation" class="main-nav">
-        <ul>
-            <?php foreach ($navItems as $key => $item): ?>
-                <li>
-                    <a href="<?= $item['href'] ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>>
-                        <?= htmlspecialchars($item['label']) ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
+    <?php require __DIR__ . '/nav.html.php'; ?>
 
     <a href="/login" class="button button--primary">Sign in</a>
     <a href="/register" class="button">Register</a>

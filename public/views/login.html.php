@@ -10,6 +10,7 @@
     <header>
         <a href="/"><strong>CookUP+</strong></a>
         <p>Core 2.4 • 48kHz / 24-bit lossless</p>
+        <?php require __DIR__ . '/partials/nav.html.php'; ?>
     </header>
 
     <main>
