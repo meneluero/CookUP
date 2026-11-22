@@ -60,6 +60,7 @@ Planowane (jeszcze ich nie ma):
 - Interfejs po polsku (domyślnie) i po angielsku.
 - Nie dodawaj frameworków ani bibliotek bez pytania.
 - Commity małe, w formacie `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `style:`, `chore:`. Commituj tylko na wyraźną prośbę.
+- Agent nie commituje ani nie pushuje - robi to autor. Agent proponuje tylko treść commita.
 
 ## Uruchamianie i weryfikacja
 - Start (w terminalu WSL, w katalogu projektu): `docker compose up --build -d`
