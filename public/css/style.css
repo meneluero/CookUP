@@ -6,18 +6,24 @@
 
 /* ---------- 1. Zmienne CSS (tokeny projektu) ----------
    Wszystkie kolory, odstepy i zaokraglenia trzymamy tutaj,
-   a nizej juz tylko uzywamy var(). Nazwy sa od roli, nie od koloru. */
+   a nizej juz tylko uzywamy var(). Nazwy sa od roli, nie od koloru.
+   Motyw wybiera atrybut data-theme na <html>: :root to wariant jasny,
+   html[data-theme="dark"] to ciemny (wyglad z figmy).
+   Kontrast tekstu >= 4.5:1, ramek pol i fokusu >= 3:1 w obu motywach. */
 :root {
-  --color-brand: #ffffff;          /* glowne akcje - biale "pigulki" z figmy */
-  --color-on-brand: #111111;       /* tekst na bialym przycisku */
-  --color-text: #f5f5f5;
-  --color-text-soft: #c4c7c8;      /* opisy pod naglowkami */
-  --color-muted: #8a8d8e;
-  --color-surface: #0e0e0e;        /* sidebar, panele, wiersze petli */
-  --color-surface-raised: #1b1b1b; /* np. tagi i przyciski na karcie */
-  --color-field: #1f1f1f;          /* inputy, selecty i pigulki */
-  --color-background: #131313;     /* kolory wziete z figmy */
-  --color-border: #262626;
+  color-scheme: light;
+  --color-bg: #f5f5f5;
+  --color-surface: #ffffff;         /* sidebar, panele, wiersze petli */
+  --color-surface-muted: #ebebeb;   /* tagi, pola, przyciski drugorzedne */
+  --color-text: #111111;
+  --color-muted: #5e6162;           /* etykiety i opisy */
+  --color-primary: #111111;         /* glowne akcje - tu czarne "pigulki" */
+  --color-primary-hover: #333333;
+  --color-border: #dcdcdc;
+  --color-focus: rgb(17 17 17 / 75%);
+  --color-danger-bg: #fff1f2;
+  --color-danger-text: #be123c;
+  --shadow-soft: 0 18px 45px rgb(17 17 17 / 12%);
 
   --space-1: 0.5rem;
   --space-2: 1rem;
@@ -38,6 +44,22 @@
   --text-lg: 1.25rem;   /* logo, naglowek promo */
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #131313;              /* kolory wziete z figmy */
+  --color-surface: #0e0e0e;
+  --color-surface-muted: #1b1b1b;
+  --color-text: #f5f5f5;
+  --color-muted: #8a8d8e;
+  --color-primary: #ffffff;         /* biale "pigulki" z figmy */
+  --color-primary-hover: #d9d9d9;
+  --color-border: #262626;
+  --color-focus: rgb(255 255 255 / 75%);
+  --color-danger-bg: #3f121d;
+  --color-danger-text: #fda4af;
+  --shadow-soft: 0 18px 45px rgb(0 0 0 / 32%);
+}
+
 /* ---------- 4. Box model ----------
    Dzieki temu width liczy sie razem z paddingiem i borderem. */
 *,
@@ -47,12 +69,16 @@
 }
 
 /* ---------- 5. Kolor, tekst i stany ---------- */
+html {
+  background: var(--color-bg);
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
   line-height: 1.6;
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--color-bg);
 }
 
 h1,
@@ -81,7 +107,7 @@ h2 {
 }
 
 a {
-  color: var(--color-brand);
+  color: var(--color-primary);
   text-decoration-thickness: 0.12em;
   text-underline-offset: 0.2em;
 }
@@ -95,7 +121,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-brand) 45%, white);
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -110,6 +136,17 @@ select:focus-visible {
 }
 
 /* ---------- Przyciski ---------- */
+/* bazowy wyglad zwyklego <button> bez klasy (np. na stronie logowania) */
+button {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+button:hover {
+  background: var(--color-primary-hover);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -121,36 +158,55 @@ select:focus-visible {
   font-size: var(--text-sm);
   color: var(--color-text);
   text-decoration: none;
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-surface-muted);
   cursor: pointer;
 }
 
+/* tlo powtarzamy, bo inaczej nadpisalby je button:hover */
 .button:hover {
   border-color: var(--color-muted);
+  background-color: var(--color-surface-muted);
 }
 
-/* biala wersja - glowna akcja na ekranie */
+/* wypelniona wersja - glowna akcja na ekranie */
 .button--primary {
-  color: var(--color-on-brand);
-  background-color: var(--color-brand);
-  border-color: var(--color-brand);
+  color: var(--color-surface);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
-/* na bialym przycisku zmiana ramki nie bylaby widac, wiec lekko go przyciemniamy */
+/* na wypelnionym przycisku zmiana ramki nie bylaby widac, wiec zmieniamy tlo */
 .button--primary:hover {
-  background-color: color-mix(in srgb, var(--color-brand) 85%, black);
+  background-color: var(--color-primary-hover);
 }
 
-/* ---------- Pola formularza ---------- */
-input[type="search"],
+/* ---------- Pola formularza ----------
+   checkbox, radio i suwak glosnosci zostaja natywne (ustawia je color-scheme).
+   Ramka w kolorze --color-muted, zeby pole bylo widoczne (kontrast >= 3:1). */
+input:not([type="checkbox"], [type="radio"], [type="range"]),
+textarea,
 select {
   width: 100%;
   padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-muted);
+  border-radius: var(--radius);
   font: inherit;
   color: var(--color-text);
-  background-color: var(--color-field);
+  background: var(--color-surface);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary);
+  outline: 3px solid var(--color-focus);
+}
+
+/* wyszukiwarka i filtry jako "pigulki" jak w figmie */
+input[type="search"],
+select {
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-muted);
 }
 
 /* ---------- Naglowek (na telefonie u gory, na desktopie sidebar) ---------- */
@@ -192,6 +248,14 @@ select {
   width: 100%;
 }
 
+/* lista linkow i przelacznik motywu w jednym rzedzie */
+.main-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .main-nav ul {
   display: flex;
   flex-wrap: wrap;
@@ -211,13 +275,49 @@ select {
 
 .main-nav a:hover {
   color: var(--color-text);
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-surface-muted);
 }
 
 /* aktywna zakladka - wybieramy ja po atrybucie aria-current */
 .main-nav a[aria-current="page"] {
-  color: var(--color-on-brand);
-  background-color: var(--color-brand);
+  color: var(--color-surface);
+  background-color: var(--color-primary);
+}
+
+/* ---------- Przelacznik motywu ----------
+   Ikona pokazuje akcje: ksiezyc wlacza ciemny, slonce jasny.
+   Ktora ikona jest widoczna, wynika tylko z data-theme, wiec JS jej nie podmienia. */
+.theme-toggle {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--color-surface-muted);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.theme-toggle .icon-sun,
+html[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
 }
 
 /* ---------- Glowna zawartosc ---------- */
@@ -232,7 +332,7 @@ select {
 
 .page-intro p {
   margin: var(--space-1) 0 0;
-  color: var(--color-text-soft);
+  color: var(--color-muted);
 }
 
 /* wspolny wyglad paneli (filtry, promo) */
@@ -292,7 +392,7 @@ select {
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background-color: var(--color-field);
+  background-color: var(--color-surface-muted);
   cursor: pointer;
 }
 
@@ -306,15 +406,15 @@ select {
   border-color: var(--color-muted);
 }
 
-/* zaznaczona pigulka robi sie biala */
+/* zaznaczona pigulka dostaje kolor glownej akcji */
 .chip:has(input:checked) {
-  color: var(--color-on-brand);
-  background-color: var(--color-brand);
+  color: var(--color-surface);
+  background-color: var(--color-primary);
 }
 
 /* radio jest niewidoczny, wiec fokus pokazujemy na pigulce */
 .chip:has(input:focus-visible) {
-  outline: 3px solid color-mix(in srgb, var(--color-brand) 45%, white);
+  outline: 3px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -338,7 +438,7 @@ select {
 
 /* podswietlenie wiersza jak w figmie - wiadomo nad czym jest myszka */
 .loop-card:hover {
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-surface-muted);
 }
 
 /* to samo gdy chodzimy tabem po przyciskach w srodku karty */
@@ -378,7 +478,7 @@ select {
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-surface-muted);
 }
 
 .actions {
@@ -400,7 +500,7 @@ select {
 
 .promo p {
   margin: 0;
-  color: var(--color-text-soft);
+  color: var(--color-muted);
 }
 
 /* ---------- Odtwarzacz na dole ----------
@@ -494,6 +594,11 @@ select {
 
   .search {
     order: 0;
+  }
+
+  .main-nav {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .main-nav ul {
