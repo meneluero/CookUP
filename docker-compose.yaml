@@ -25,14 +25,31 @@ services:
     networks:
       - pg-network
     volumes:
+      # nazwany wolumen - dane bazy zostają po docker compose down
+      - pg-data:/var/lib/postgresql/data
       - ./docker/db:/docker-entrypoint-initdb.d
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/app
+    # dane do config.php; w kontenerze baza jest pod nazwą usługi "db", nie localhost
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - pg-network
   
