@@ -75,9 +75,25 @@ Przejście na Pro odbywa się przyciskiem „Upgrade” na stronie Pricing (bez 
 6. Gdy żadna trasa nie pasuje, wyświetlany jest widok 404 z kodem odpowiedzi 404.
 
 ## Baza danych (ERD)
-<!-- TODO: diagram w Mermaid, np.:
+Obecny schemat (PostgreSQL):
+
 ```mermaid
 erDiagram
+    LOOPS {
+        bigint id PK "GENERATED ALWAYS AS IDENTITY"
+        varchar title "NOT NULL, max 150"
+        varchar producer "NOT NULL"
+        varchar genre "NOT NULL, indeks"
+        smallint bpm "NOT NULL, CHECK 40-300"
+        varchar musical_key "NOT NULL"
+        integer duration_seconds "NOT NULL, CHECK > 0"
+        text description "NULL"
+        timestamptz created_at "NOT NULL, DEFAULT now, indeks"
+        timestamptz updated_at "NOT NULL, DEFAULT now"
+    }
+```
+
+<!-- TODO: docelowe relacje, dodawane razem z kolejnymi funkcjami:
     ROLES ||--o{ USERS : has
     USERS ||--o{ LOOPS : uploads
     GENRES ||--o{ LOOPS : categorizes
@@ -85,16 +101,23 @@ erDiagram
     LOOPS ||--o{ FAVORITES : in
     LOOPS ||--o{ COLLABS : receives
     USERS ||--o{ COLLABS : sends
-```
 -->
 
-Eksport bazy: `docker/db/init.sql` <!-- TODO -->
+Schemat bazy: `docker/db/init.sql` - PostgreSQL wykonuje go automatycznie przy pierwszym starcie z pustym wolumenem.
+Eksport bazy do pliku .sql: <!-- TODO -->
 
 ## Uruchomienie
 ```bash
 cp .env.example .env
 docker compose up --build -d
 docker compose exec php composer install
+# przykładowe pętle (dodawane przez aplikację, uruchomienie drugi raz niczego nie dubluje)
+docker compose exec php php scripts/seed-loops.php
+```
+
+Podgląd tabeli w bazie:
+```bash
+docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\d loops"'
 ```
 - Aplikacja: http://localhost:8080
 - Mailpit: http://localhost:8025
