@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Data\LoopCatalog;
 use App\Entity\User;
+use App\Repository\LoopRepository;
 use DateTimeImmutable;
 
 final class ProfileController extends AppController
 {
+    public function __construct(private readonly LoopRepository $loopRepository)
+    {
+    }
+
     public function index(): void
     {
         // tymczasowo na sztywno - po dodaniu logowania to będzie zalogowany użytkownik
@@ -32,7 +36,7 @@ final class ProfileController extends AppController
                 ['label' => 'Active loop vaults', 'value' => '24', 'note' => 'Published & synchronized'],
                 ['label' => 'Royalty clear rate', 'value' => '99.4%', 'note' => '100% sync ready'],
             ],
-            'loops' => LoopCatalog::all(),
+            'loops' => $this->loopRepository->findAll(),
         ]);
     }
 }

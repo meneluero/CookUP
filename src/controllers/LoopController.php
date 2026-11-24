@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Data\LoopCatalog;
+use App\Repository\LoopRepository;
 
 final class LoopController extends AppController
 {
+    public function __construct(private readonly LoopRepository $loopRepository)
+    {
+    }
+
     public function index(): void
     {
-        $loops = LoopCatalog::all();
+        $loops = $this->loopRepository->findAll();
 
         $this->render('loops', [
             'pageTitle' => 'Browse loops | CookUP+',
@@ -23,7 +28,7 @@ final class LoopController extends AppController
 
     public function show(int $id): void
     {
-        $loop = LoopCatalog::find($id);
+        $loop = $this->loopRepository->find($id);
 
         if ($loop === null) {
             $this->renderNotFound();

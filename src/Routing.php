@@ -10,6 +10,16 @@ final class Routing
 {
     private array $routes = [];
 
+    /**
+     * Fabryki kontrolerów, które potrzebują zależności (np. repozytorium).
+     * Kontrolery bez zależności router tworzy sam przez new.
+     *
+     * @param array<class-string<AppController>, callable(): AppController> $controllerFactories
+     */
+    public function __construct(private readonly array $controllerFactories = [])
+    {
+    }
+
     public function get(string $path, string $controller, string $action): void
     {
         $this->add('GET', $path, $controller, $action);
@@ -88,7 +98,9 @@ final class Routing
             );
 
             $controllerClass = $route['controller'];
-            $controller = new $controllerClass();
+            $controller = isset($this->controllerFactories[$controllerClass])
+                ? ($this->controllerFactories[$controllerClass])()
+                : new $controllerClass();
 
             if (!$controller instanceof AppController) {
                 throw new \RuntimeException('Invalid controller');

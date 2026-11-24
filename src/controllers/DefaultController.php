@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Data\LoopCatalog;
+use App\Repository\LoopRepository;
 
 final class DefaultController extends AppController
 {
+    public function __construct(private readonly LoopRepository $loopRepository)
+    {
+    }
+
     public function index(): void
     {
         $this->render('home', [
@@ -19,7 +23,7 @@ final class DefaultController extends AppController
                 ['label' => 'Live producers', 'value' => '412', 'note' => 'Session room active'],
                 ['label' => 'Engine jitter', 'value' => '<2.4ms', 'note' => 'Direct to disk'],
             ],
-            'loops' => LoopCatalog::all(),
+            'loops' => $this->loopRepository->findAll(),
             'collections' => [
                 ['label' => 'Staff pick', 'title' => 'Analog Tape Saturations V1', 'details' => '42 presets • Studer A80 imprints'],
                 ['label' => 'Series drop', 'title' => 'Modular Sub Harmonic Rhythms', 'details' => '86 loops • 100% royalty free'],
@@ -92,5 +96,10 @@ final class DefaultController extends AppController
     public function notFound(): void
     {
         $this->renderNotFound();
+    }
+
+    public function serverError(): void
+    {
+        $this->renderError(500, 'Server error', 'Something went wrong on our side. Please try again later.');
     }
 }

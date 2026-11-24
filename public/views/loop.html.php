@@ -20,7 +20,9 @@
                 <p>Verified master stem</p>
                 <h1><?= htmlspecialchars($loop->getTitle()) ?></h1>
                 <p>prod. <a href="/profile"><?= htmlspecialchars($loop->getProducer()) ?></a></p>
-                <p><?= htmlspecialchars($loop->getDescription()) ?></p>
+                <?php if ($loop->getDescription() !== null): ?>
+                    <p><?= htmlspecialchars($loop->getDescription()) ?></p>
+                <?php endif; ?>
                 <button type="button">Add to favorites</button>
                 <button type="button">Share</button>
                 <a href="#stems-heading">Export stems (WAV + MIDI)</a>
