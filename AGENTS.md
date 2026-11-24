@@ -38,7 +38,10 @@ Obecnie:
 - `src/Routing.php` - dopasowanie tras i uruchamianie kontrolerów.
 - `src/controllers/` - kontrolery w namespace `App\Controller`, dziedziczą po `AppController`.
   Mapowanie jest ustawione w `composer.json`.
-- `src/Data/LoopCatalog.php` - tymczasowe dane testowe, później zastąpią je repozytoria z PostgreSQL.
+- `src/Entity/` - encje w namespace `App\Entity` (`Loop`, `User` ze stałymi ról): prywatne pola
+  tylko do odczytu i gettery. Kontrolery przekazują do widoków encje, nie tablice.
+- `src/Data/LoopCatalog.php` - tymczasowe dane testowe w kształcie wierszy z bazy, zamieniane na encje.
+  Później zastąpią je repozytoria z PostgreSQL.
 - `public/views/` - widoki `*.html.php`, wspólne fragmenty są w `public/views/partials/`.
 - `public/css/style.css` - jeden wspólny arkusz, zmienne w `:root`, podejście mobile first.
 - `docker/` - Dockerfile dla nginx, php i bazy.
