@@ -39,17 +39,24 @@ Obecnie:
 - `src/controllers/` - kontrolery w namespace `App\Controller`, dziedziczą po `AppController`.
   Mapowanie jest ustawione w `composer.json`.
 - `src/Entity/` - encje w namespace `App\Entity` (`Loop`, `User` ze stałymi ról): prywatne pola
-  tylko do odczytu i gettery. Kontrolery przekazują do widoków encje, nie tablice.
-- `src/Data/LoopCatalog.php` - tymczasowe dane testowe w kształcie wierszy z bazy, zamieniane na encje.
-  Później zastąpią je repozytoria z PostgreSQL.
+  i gettery. Kontrolery przekazują do widoków encje, nie tablice.
+- `src/Repository/` - repozytoria w namespace `App\Repository`, dziedziczą po `Repository`.
+  Cały SQL jest tutaj (prepared statements), wiersze z bazy mapujemy na encje.
+- `src/Database.php` + `config.php` - połączenie PDO z PostgreSQL. Dane logowania z `.env`
+  (przez `environment` usługi `php` w `docker-compose.yaml`), połączenie otwierane przy pierwszym zapytaniu.
+- Zależności (repozytoria) tworzymy w `public/index.php` i przekazujemy kontrolerom przez fabryki w `Routing`.
+- `src/Data/LoopCatalog.php` - tymczasowe dane testowe (stemy, komentarze), których nie ma jeszcze w bazie.
+- `docker/db/init.sql` - schemat bazy, wykonywany automatycznie przy pierwszym starcie z pustym wolumenem.
+  Tam też trafi eksport bazy do `.sql`.
+- `scripts/seed-loops.php` - przykładowe pętle dodawane przez `LoopRepository`.
 - `public/views/` - widoki `*.html.php`, wspólne fragmenty są w `public/views/partials/`.
+  Wspólna strona błędów: `error.html.php` (`AppController::renderError()`).
 - `public/css/style.css` - jeden wspólny arkusz, zmienne w `:root`, podejście mobile first.
 - `docker/` - Dockerfile dla nginx, php i bazy.
 
 Planowane (jeszcze ich nie ma):
 - `lang/` - tłumaczenia `pl.php` i `en.php`.
 - `public/uploads/` - pliki użytkowników, z blokadą wykonywania PHP w nginx.
-- `docker/db/init.sql` - plik startowy bazy, tam też trafi eksport bazy do `.sql`.
 - plik crona i skrypt newslettera.
 - `tests/` - testy PHPUnit.
 
@@ -68,6 +75,8 @@ Planowane (jeszcze ich nie ma):
 ## Uruchamianie i weryfikacja
 - Start (w terminalu WSL, w katalogu projektu): `docker compose up --build -d`
 - Aplikacja: http://localhost:8080, Mailpit: http://localhost:8025 (domyślne porty)
+- Dane przykładowe: `docker compose exec -T php php scripts/seed-loops.php`
+- Baza (psql): `docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'`
 - Sprawdzenie składni: `docker compose exec -T php php -l ścieżka/do/pliku.php`
 - Testy (jak już będą): `docker compose exec -T php vendor/bin/phpunit`
 - Po zmianie trasy sprawdź poprawny adres i odpowiedź 404 dla nieistniejącego adresu.
