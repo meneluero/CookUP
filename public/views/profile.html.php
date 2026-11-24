@@ -9,14 +9,10 @@
     <main>
         <section aria-labelledby="producer-heading">
             <!-- TODO: zdjęcie profilowe producenta (<img>) po dodaniu uploadu plików -->
-            <h1 id="producer-heading"><?= htmlspecialchars($producer['name']) ?></h1>
-            <p><?= htmlspecialchars($producer['handle']) ?> • <?= htmlspecialchars($producer['role']) ?></p>
-            <p><?= htmlspecialchars($producer['bio']) ?></p>
-            <ul>
-                <li>DAW: <?= htmlspecialchars($producer['daw']) ?></li>
-                <li>Master bus: <?= htmlspecialchars($producer['masterBus']) ?></li>
-                <li>Active since <?= htmlspecialchars($producer['activeSince']) ?></li>
-            </ul>
+            <h1 id="producer-heading"><?= htmlspecialchars($producer->getName()) ?></h1>
+            <p><?= htmlspecialchars($producer->getHandle()) ?> • <?= htmlspecialchars(ucfirst($producer->getRole())) ?></p>
+            <p><?= htmlspecialchars($producer->getBio()) ?></p>
+            <p>Active since <time datetime="<?= $producer->getCreatedAt()->format('Y-m-d') ?>"><?= $producer->getCreatedAt()->format('Y') ?></time></p>
             <a href="#">Edit profile</a>
             <a href="#">Producer card</a>
         </section>
@@ -50,23 +46,23 @@
             </form>
 
             <table>
-                <caption>Loops published by <?= htmlspecialchars($producer['name']) ?></caption>
+                <caption>Loops published by <?= htmlspecialchars($producer->getName()) ?></caption>
                 <thead>
                     <tr>
                         <th scope="col">Track &amp; stem title</th>
                         <th scope="col">Technical profile</th>
-                        <th scope="col">Plays</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Genre</th>
+                        <th scope="col">Length</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($loops as $loop): ?>
                         <tr>
-                            <th scope="row"><a href="/loops/<?= $loop['id'] ?>"><?= htmlspecialchars($loop['title']) ?></a></th>
-                            <td><?= $loop['bpm'] ?> BPM • <?= htmlspecialchars($loop['key']) ?></td>
-                            <td><?= htmlspecialchars($loop['plays']) ?></td>
-                            <td><?= htmlspecialchars($loop['status']) ?></td>
+                            <th scope="row"><a href="/loops/<?= $loop->getId() ?>"><?= htmlspecialchars($loop->getTitle()) ?></a></th>
+                            <td><?= $loop->getBpm() ?> BPM • <?= htmlspecialchars($loop->getMusicalKey()) ?></td>
+                            <td><?= htmlspecialchars($loop->getGenre()) ?></td>
+                            <td><time datetime="PT<?= $loop->getDurationSeconds() ?>S"><?= $loop->getFormattedDuration() ?></time></td>
                             <td>
                                 <a href="#">Edit</a>
                                 <a href="#">Download</a>

@@ -10,17 +10,17 @@
         <nav aria-label="Breadcrumb">
             <ol>
                 <li><a href="/loops">Loops vault</a></li>
-                <li><?= htmlspecialchars($loop['genre']) ?></li>
-                <li aria-current="page"><?= htmlspecialchars($loop['title']) ?></li>
+                <li><?= htmlspecialchars($loop->getGenre()) ?></li>
+                <li aria-current="page"><?= htmlspecialchars($loop->getTitle()) ?></li>
             </ol>
         </nav>
 
         <article>
             <header>
-                <p>Verified master stem • <?= htmlspecialchars($loop['status']) ?></p>
-                <h1><?= htmlspecialchars($loop['title']) ?></h1>
-                <p>prod. <a href="/profile"><?= htmlspecialchars($loop['producer']) ?></a></p>
-                <p><?= htmlspecialchars($loop['description']) ?></p>
+                <p>Verified master stem</p>
+                <h1><?= htmlspecialchars($loop->getTitle()) ?></h1>
+                <p>prod. <a href="/profile"><?= htmlspecialchars($loop->getProducer()) ?></a></p>
+                <p><?= htmlspecialchars($loop->getDescription()) ?></p>
                 <button type="button">Add to favorites</button>
                 <button type="button">Share</button>
                 <a href="#stems-heading">Export stems (WAV + MIDI)</a>
@@ -49,9 +49,11 @@
                 <h2 id="specs-heading">Specifications &amp; master clearance</h2>
                 <dl>
                     <dt>Key signature</dt>
-                    <dd><?= htmlspecialchars($loop['key']) ?></dd>
+                    <dd><?= htmlspecialchars($loop->getMusicalKey()) ?></dd>
                     <dt>Tempo / meter</dt>
-                    <dd><?= $loop['bpm'] ?> BPM, 4/4</dd>
+                    <dd><?= $loop->getBpm() ?> BPM, 4/4</dd>
+                    <dt>Length</dt>
+                    <dd><time datetime="PT<?= $loop->getDurationSeconds() ?>S"><?= $loop->getFormattedDuration() ?></time></dd>
                     <dt>Stems included</dt>
                     <dd><?= count($stems) ?> discrete channels</dd>
                     <dt>Licensing &amp; rights</dt>
@@ -78,7 +80,7 @@
 
         <aside aria-labelledby="collab-heading">
             <h2 id="collab-heading">Request stems collab / topline</h2>
-            <p>Send private remix stems, co-production proposals, or vocal topline directly to <?= htmlspecialchars($loop['producer']) ?> for joint release review.</p>
+            <p>Send private remix stems, co-production proposals, or vocal topline directly to <?= htmlspecialchars($loop->getProducer()) ?> for joint release review.</p>
             <a href="/login">Request collaboration</a>
             <a href="/login">Instant fork</a>
         </aside>

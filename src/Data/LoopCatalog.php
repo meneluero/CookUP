@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Data;
 
+use App\Entity\Loop;
+
 /*
  Tymczasowe dane testowe (zamiast bazy danych).
- Później zastąpimy je repozytorium pobierającym dane z PostgreSQL.
+ Wiersze mają ten sam kształt co przyszła tabela loops, a toEntity()
+ to mapowanie wiersza na encję, które przejmie repozytorium z PostgreSQL.
 */
 final class LoopCatalog
 {
@@ -17,11 +20,8 @@ final class LoopCatalog
             'producer' => '@marx_wav',
             'genre' => 'R&B / Soul',
             'bpm' => 130,
-            'key' => 'F# minor',
-            'bars' => 8,
-            'duration' => '0:32',
-            'plays' => '412.5k',
-            'status' => 'Live',
+            'musical_key' => 'F# minor',
+            'duration_seconds' => 32,
             'description' => 'Captured through 1978 Studer A80 1/4" 2-track master tape machine. Warm harmonic low-end saturation, pristine mechanical Rhodes Mk II dynamics, and authentic vinyl noise floor.',
         ],
         2 => [
@@ -30,11 +30,8 @@ final class LoopCatalog
             'producer' => '@nrsma',
             'genre' => 'Trap / Sub',
             'bpm' => 144,
-            'key' => 'C minor',
-            'bars' => 8,
-            'duration' => '0:32',
-            'plays' => '289.1k',
-            'status' => 'Verified master',
+            'musical_key' => 'C minor',
+            'duration_seconds' => 32,
             'description' => 'Deep sub 808 layers with granular textures, tuned for modern trap low-end.',
         ],
         3 => [
@@ -43,11 +40,8 @@ final class LoopCatalog
             'producer' => '@akira_beats',
             'genre' => 'Neo-Soul / Lofi',
             'bpm' => 88,
-            'key' => 'Eb major',
-            'bars' => 8,
-            'duration' => '0:43',
-            'plays' => '194.0k',
-            'status' => 'Live',
+            'musical_key' => 'Eb major',
+            'duration_seconds' => 43,
             'description' => 'Rainy late-night Rhodes voicings recorded through a vintage tape echo.',
         ],
         4 => [
@@ -56,11 +50,8 @@ final class LoopCatalog
             'producer' => '@retrograde',
             'genre' => 'Synthwave / Drill',
             'bpm' => 148,
-            'key' => 'Bb minor',
-            'bars' => 8,
-            'duration' => '0:43',
-            'plays' => '152.8k',
-            'status' => 'Live',
+            'musical_key' => 'Bb minor',
+            'duration_seconds' => 43,
             'description' => 'Punchy polysynth brass stabs from a Prophet-5, perfect for drill and synthwave.',
         ],
         5 => [
@@ -69,11 +60,8 @@ final class LoopCatalog
             'producer' => '@luna_stems',
             'genre' => 'Acoustic / Indie',
             'bpm' => 135,
-            'key' => 'A minor',
-            'bars' => 8,
-            'duration' => '0:28',
-            'plays' => '—',
-            'status' => 'In review',
+            'musical_key' => 'A minor',
+            'duration_seconds' => 28,
             'description' => 'Warm nylon-string guitar lick with subtle room ambience.',
         ],
     ];
@@ -94,14 +82,17 @@ final class LoopCatalog
         ['author' => '@k_apex', 'time' => '5h ago', 'marker' => '02:48', 'text' => 'Top percussion shaker pocket has the exact Dilla-style swing we needed for an R&B singer session tomorrow.'],
     ];
 
+    /**
+     * @return Loop[]
+     */
     public static function all(): array
     {
-        return array_values(self::LOOPS);
+        return array_values(array_map(self::toEntity(...), self::LOOPS));
     }
 
-    public static function find(int $id): ?array
+    public static function find(int $id): ?Loop
     {
-        return self::LOOPS[$id] ?? null;
+        return isset(self::LOOPS[$id]) ? self::toEntity(self::LOOPS[$id]) : null;
     }
 
     public static function stems(): array
@@ -112,5 +103,19 @@ final class LoopCatalog
     public static function comments(): array
     {
         return self::COMMENTS;
+    }
+
+    private static function toEntity(array $row): Loop
+    {
+        return new Loop(
+            id: $row['id'],
+            title: $row['title'],
+            producer: $row['producer'],
+            genre: $row['genre'],
+            bpm: $row['bpm'],
+            musicalKey: $row['musical_key'],
+            durationSeconds: $row['duration_seconds'],
+            description: $row['description'],
+        );
     }
 }

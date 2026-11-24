@@ -70,19 +70,19 @@
                     <li>
                         <article class="loop-card">
                             <header>
-                                <h3><a href="/loops/<?= $loop['id'] ?>"><?= htmlspecialchars($loop['title']) ?></a></h3>
-                                <p>prod. <?= htmlspecialchars($loop['producer']) ?></p>
+                                <h3><a href="/loops/<?= $loop->getId() ?>"><?= htmlspecialchars($loop->getTitle()) ?></a></h3>
+                                <p>prod. <?= htmlspecialchars($loop->getProducer()) ?></p>
                             </header>
                             <ul class="tags">
-                                <li><?= $loop['bpm'] ?> BPM</li>
-                                <li><?= htmlspecialchars($loop['key']) ?></li>
-                                <li><?= htmlspecialchars($loop['genre']) ?></li>
-                                <li><?= $loop['bars'] ?> bars</li>
+                                <li><?= $loop->getBpm() ?> BPM</li>
+                                <li><?= htmlspecialchars($loop->getMusicalKey()) ?></li>
+                                <li><?= htmlspecialchars($loop->getGenre()) ?></li>
+                                <li><time datetime="PT<?= $loop->getDurationSeconds() ?>S"><?= $loop->getFormattedDuration() ?></time></li>
                             </ul>
                             <div class="actions">
                                 <button type="button" class="button button--primary">Play</button>
                                 <button type="button" class="button">Save</button>
-                                <a href="/loops/<?= $loop['id'] ?>" class="button">View stems</a>
+                                <a href="/loops/<?= $loop->getId() ?>" class="button">View stems</a>
                             </div>
                         </article>
                     </li>

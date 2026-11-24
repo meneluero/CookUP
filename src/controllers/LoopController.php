@@ -31,7 +31,7 @@ final class LoopController extends AppController
         }
 
         $this->render('loop', [
-            'pageTitle' => $loop['title'] . ' | CookUP+',
+            'pageTitle' => $loop->getTitle() . ' | CookUP+',
             'activeNav' => 'loops',
             'loop' => $loop,
             'stems' => LoopCatalog::stems(),

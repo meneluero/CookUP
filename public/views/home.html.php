@@ -44,13 +44,13 @@
                     <?php foreach ($loops as $loop): ?>
                         <tr>
                             <th scope="row">
-                                <a href="/loops/<?= $loop['id'] ?>"><?= htmlspecialchars($loop['title']) ?></a>
-                                <small><?= htmlspecialchars($loop['producer']) ?> • <?= htmlspecialchars($loop['genre']) ?></small>
+                                <a href="/loops/<?= $loop->getId() ?>"><?= htmlspecialchars($loop->getTitle()) ?></a>
+                                <small><?= htmlspecialchars($loop->getProducer()) ?> • <?= htmlspecialchars($loop->getGenre()) ?></small>
                             </th>
-                            <td><?= $loop['bpm'] ?></td>
-                            <td><?= htmlspecialchars($loop['key']) ?></td>
-                            <td><?= $loop['bars'] ?> bars (<?= htmlspecialchars($loop['duration']) ?>)</td>
-                            <td><a href="/loops/<?= $loop['id'] ?>">Stems</a></td>
+                            <td><?= $loop->getBpm() ?></td>
+                            <td><?= htmlspecialchars($loop->getMusicalKey()) ?></td>
+                            <td><time datetime="PT<?= $loop->getDurationSeconds() ?>S"><?= $loop->getFormattedDuration() ?></time></td>
+                            <td><a href="/loops/<?= $loop->getId() ?>">Stems</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
