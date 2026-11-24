@@ -7,8 +7,8 @@
     <?php require __DIR__ . '/partials/header.html.php'; ?>
 
     <main>
-        <h1>404</h1>
-        <p>This page does not exist.</p>
+        <h1><?= $statusCode ?></h1>
+        <p><?= htmlspecialchars($message) ?></p>
         <a href="/">Back to the vault</a>
     </main>
 </body>

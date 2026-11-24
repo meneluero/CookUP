@@ -20,10 +20,18 @@ abstract class AppController
 
     protected function renderNotFound(): void
     {
-        http_response_code(404);
+        $this->renderError(404, 'Page not found', 'This page does not exist.');
+    }
 
-        $this->render('not-found', [
-            'pageTitle' => 'Page not found | CookUP+',
+    // wspólna strona błędu (404, 500, a później np. 403)
+    protected function renderError(int $statusCode, string $title, string $message): void
+    {
+        http_response_code($statusCode);
+
+        $this->render('error', [
+            'pageTitle' => $title . ' | CookUP+',
+            'statusCode' => $statusCode,
+            'message' => $message,
         ]);
     }
 }
