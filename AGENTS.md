@@ -45,6 +45,12 @@ Obecnie:
 - `src/Database.php` + `config.php` - połączenie PDO z PostgreSQL. Dane logowania z `.env`
   (przez `environment` usługi `php` w `docker-compose.yaml`), połączenie otwierane przy pierwszym zapytaniu.
 - Zależności (repozytoria) tworzymy w `public/index.php` i przekazujemy kontrolerom przez fabryki w `Routing`.
+- Sesja startuje tylko w `public/index.php` (strict mode, ciasteczko HttpOnly + SameSite=Lax).
+  W sesji trzymamy tylko `user_id`, `user_name` i `csrf_token`.
+- `AppController` - wspólne metody: `isPost()`, `redirect()` (303), `requireLogin()`, token CSRF,
+  `destroySession()`. `render()` dodaje do każdego widoku `csrfToken` i `currentUserName`.
+- `SecurityController` - rejestracja, logowanie i wylogowanie (POST + CSRF). Chronione strony
+  wywołują `requireLogin()` na początku akcji (np. `/profile`).
 - `src/Data/LoopCatalog.php` - tymczasowe dane testowe (stemy, komentarze), których nie ma jeszcze w bazie.
 - `docker/db/init.sql` - schemat bazy, wykonywany automatycznie przy pierwszym starcie z pustym wolumenem.
   Tam też trafi eksport bazy do `.sql`.
