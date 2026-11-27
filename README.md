@@ -91,10 +91,18 @@ erDiagram
         timestamptz created_at "NOT NULL, DEFAULT now, indeks"
         timestamptz updated_at "NOT NULL, DEFAULT now"
     }
+    USERS {
+        bigint id PK "GENERATED ALWAYS AS IDENTITY"
+        varchar name "NOT NULL, max 120"
+        varchar email "NOT NULL, UNIQUE (bez względu na wielkość liter)"
+        varchar password_hash "NOT NULL, wynik password_hash()"
+        varchar role "NOT NULL, DEFAULT starter, CHECK starter/pro/admin"
+        boolean newsletter "NOT NULL, DEFAULT false"
+        timestamptz created_at "NOT NULL, DEFAULT now"
+    }
 ```
 
 <!-- TODO: docelowe relacje, dodawane razem z kolejnymi funkcjami:
-    ROLES ||--o{ USERS : has
     USERS ||--o{ LOOPS : uploads
     GENRES ||--o{ LOOPS : categorizes
     USERS ||--o{ FAVORITES : adds
@@ -118,6 +126,11 @@ docker compose exec php php scripts/seed-loops.php
 Podgląd tabeli w bazie:
 ```bash
 docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\d loops"'
+```
+
+Po zmianie `docker/db/init.sql` na bazie, która już istnieje (plik można uruchomić wielokrotnie):
+```bash
+docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < docker/db/init.sql
 ```
 - Aplikacja: http://localhost:8080
 - Mailpit: http://localhost:8025
