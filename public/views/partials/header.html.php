@@ -12,6 +12,15 @@
 
     <?php require __DIR__ . '/nav.html.php'; ?>
 
-    <a href="/login" class="button button--primary">Sign in</a>
-    <a href="/register" class="button">Register</a>
+    <?php if ($currentUserName !== null): ?>
+        <p class="current-user">Signed in as <strong><?= htmlspecialchars($currentUserName) ?></strong></p>
+        <!-- wylogowanie zmienia stan, więc to formularz POST z tokenem CSRF, a nie zwykły link -->
+        <form action="/logout" method="post">
+            <input type="hidden" name="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
+            <button type="submit" class="button">Log out</button>
+        </form>
+    <?php else: ?>
+        <a href="/login" class="button button--primary">Sign in</a>
+        <a href="/register" class="button">Register</a>
+    <?php endif; ?>
 </header>

@@ -248,6 +248,13 @@ select {
   width: 100%;
 }
 
+/* "Signed in as ..." obok przycisku wylogowania */
+.current-user {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
 /* lista linkow i przelacznik motywu w jednym rzedzie */
 .main-nav {
   display: flex;
