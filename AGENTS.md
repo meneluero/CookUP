@@ -58,6 +58,9 @@ Obecnie:
 - `public/views/` - widoki `*.html.php`, wspólne fragmenty są w `public/views/partials/`.
   Wspólna strona błędów: `error.html.php` (`AppController::renderError()`).
 - `public/css/style.css` - jeden wspólny arkusz, zmienne w `:root`, podejście mobile first.
+- `public/js/` - czysty JS ładowany z `defer` w `partials/head.html.php` (bez `onclick` w HTML,
+  bez `innerHTML` z danymi użytkownika): `theme.js` (motyw), `forms.js` (walidacja w przeglądarce,
+  np. `data-match` dla powtórzenia hasła; teksty komunikatów podaje PHP w atrybutach `data-`).
 - `docker/` - Dockerfile dla nginx, php i bazy.
 
 Planowane (jeszcze ich nie ma):
