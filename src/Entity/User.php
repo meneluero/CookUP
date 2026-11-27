@@ -8,8 +8,8 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 
 /*
- Encja użytkownika. Role trzymamy jako stałe klasy, żeby w kodzie
- nie wpisywać ręcznie napisów typu 'pro'. Email i hasło dojdą z logowaniem.
+ Encja użytkownika - pola zgodne z tabelą users. Role trzymamy jako stałe klasy,
+ żeby w kodzie nie wpisywać ręcznie napisów typu 'pro'.
 */
 final readonly class User
 {
@@ -22,9 +22,10 @@ final readonly class User
     public function __construct(
         private int $id,
         private string $name,
-        private string $handle,
-        private string $bio,
+        private string $email,
+        private string $passwordHash,
         private string $role,
+        private bool $newsletter,
         private DateTimeImmutable $createdAt,
     ) {
         if (!in_array($role, self::ROLES, true)) {
@@ -42,19 +43,25 @@ final readonly class User
         return $this->name;
     }
 
-    public function getHandle(): string
+    public function getEmail(): string
     {
-        return $this->handle;
+        return $this->email;
     }
 
-    public function getBio(): string
+    // tylko do password_verify() przy logowaniu - nigdy nie wyświetlamy
+    public function getPasswordHash(): string
     {
-        return $this->bio;
+        return $this->passwordHash;
     }
 
     public function getRole(): string
     {
         return $this->role;
+    }
+
+    public function wantsNewsletter(): bool
+    {
+        return $this->newsletter;
     }
 
     public function getCreatedAt(): DateTimeImmutable

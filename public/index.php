@@ -8,26 +8,52 @@ use App\Controller\ProfileController;
 use App\Controller\SecurityController;
 use App\Database;
 use App\Repository\LoopRepository;
+use App\Repository\UserRepository;
 use App\Routing;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+// Sesja startuje w jednym miejscu, zanim cokolwiek trafi do przeglądarki.
+// strict mode: PHP nie przyjmie identyfikatora sesji wymyślonego przez klienta
+ini_set('session.use_strict_mode', '1');
+
+$isHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+
+session_set_cookie_params([
+    'lifetime' => 0,          // ciasteczko sesyjne - znika po zamknięciu przeglądarki
+    'path' => '/',
+    'secure' => $isHttps,     // tylko przez HTTPS, gdy strona działa na HTTPS
+    'httponly' => true,       // JavaScript nie odczyta ciasteczka (utrudnia kradzież po XSS)
+    'samesite' => 'Lax',      // obce strony nie dołączą ciasteczka do swoich żądań POST
+]);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Punkt składania aplikacji: tutaj tworzymy zależności i przekazujemy je kontrolerom,
 // więc kontroler dostaje gotowe repozytorium i sam nie tworzy połączenia z bazą.
-$loopRepository = new LoopRepository(new Database());
+$database = new Database();
+$loopRepository = new LoopRepository($database);
+$userRepository = new UserRepository($database);
 
 $routing = new Routing([
     DefaultController::class => static fn (): DefaultController => new DefaultController($loopRepository),
     LoopController::class => static fn (): LoopController => new LoopController($loopRepository),
-    ProfileController::class => static fn (): ProfileController => new ProfileController($loopRepository),
+    ProfileController::class => static fn (): ProfileController => new ProfileController($loopRepository, $userRepository),
+    SecurityController::class => static fn (): SecurityController => new SecurityController($userRepository),
 ]);
 
+// lista tras to biała lista operacji - nazwy kontrolera ani metody nie bierzemy z adresu URL
 $routing->get('/', DefaultController::class, 'index');
 $routing->get('/pricing', DefaultController::class, 'pricing');
 $routing->get('/loops', LoopController::class, 'index');
 $routing->get('/loops/{id}', LoopController::class, 'show');
 $routing->get('/login', SecurityController::class, 'login');
+$routing->post('/login', SecurityController::class, 'login');
 $routing->get('/register', SecurityController::class, 'register');
+$routing->post('/register', SecurityController::class, 'register');
+$routing->post('/logout', SecurityController::class, 'logout');
 $routing->get('/profile', ProfileController::class, 'index');
 
 try {

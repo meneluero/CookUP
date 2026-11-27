@@ -27,30 +27,46 @@
                 <a href="/register"<?= $isRegister ? ' aria-current="page"' : '' ?>>Register</a>
             </nav>
 
+            <?php if ($notice !== null): ?>
+                <p role="status"><?= htmlspecialchars($notice) ?></p>
+            <?php endif; ?>
+
+            <?php if ($errors !== []): ?>
+                <div role="alert">
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
             <form action="<?= $isRegister ? '/register' : '/login' ?>" method="post">
+                <input type="hidden" name="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
+
                 <?php if ($isRegister): ?>
-                    <label for="handle">Producer handle</label>
-                    <input type="text" id="handle" name="handle" placeholder="@your_name" required>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($form['name'] ?? '') ?>" autocomplete="name" maxlength="120" required>
                 <?php endif; ?>
 
                 <label for="email">Producer email</label>
-                <input type="email" id="email" name="email" placeholder="producer@cookup.audio" autocomplete="email" required>
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($form['email'] ?? '') ?>" placeholder="producer@cookup.audio" autocomplete="email" required>
 
                 <label for="password">Studio key</label>
-                <input type="password" id="password" name="password" autocomplete="<?= $isRegister ? 'new-password' : 'current-password' ?>" required>
+                <input type="password" id="password" name="password" autocomplete="<?= $isRegister ? 'new-password' : 'current-password' ?>"<?= $isRegister ? ' minlength="8"' : '' ?> required>
                 <?php if (!$isRegister): ?>
                     <a href="#">Forgot key?</a>
                 <?php endif; ?>
 
                 <?php if ($isRegister): ?>
-                    <label for="password-repeat">Repeat studio key</label>
-                    <input type="password" id="password-repeat" name="password_repeat" autocomplete="new-password" required>
-                <?php endif; ?>
+                    <label for="password-confirmation">Repeat studio key</label>
+                    <input type="password" id="password-confirmation" name="passwordConfirmation" autocomplete="new-password" minlength="8" required>
 
-                <label>
-                    <input type="checkbox" name="newsletter" value="1">
-                    Send me curated stem packs &amp; weekly audio engineering drops.
-                </label>
+                    <label>
+                        <input type="checkbox" name="newsletter" value="1"<?= !empty($form['newsletter']) ? ' checked' : '' ?>>
+                        Send me a weekly email with new loops.
+                    </label>
+                <?php endif; ?>
 
                 <button type="submit"><?= $isRegister ? 'Create account' : 'Launch studio session' ?></button>
             </form>

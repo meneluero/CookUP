@@ -9,10 +9,9 @@
     <main>
         <section aria-labelledby="producer-heading">
             <!-- TODO: zdjęcie profilowe producenta (<img>) po dodaniu uploadu plików -->
-            <h1 id="producer-heading"><?= htmlspecialchars($producer->getName()) ?></h1>
-            <p><?= htmlspecialchars($producer->getHandle()) ?> • <?= htmlspecialchars(ucfirst($producer->getRole())) ?></p>
-            <p><?= htmlspecialchars($producer->getBio()) ?></p>
-            <p>Active since <time datetime="<?= $producer->getCreatedAt()->format('Y-m-d') ?>"><?= $producer->getCreatedAt()->format('Y') ?></time></p>
+            <h1 id="producer-heading"><?= htmlspecialchars($user->getName()) ?></h1>
+            <p><?= htmlspecialchars(ucfirst($user->getRole())) ?> account</p>
+            <p>Member since <time datetime="<?= $user->getCreatedAt()->format('Y-m-d') ?>"><?= $user->getCreatedAt()->format('F Y') ?></time></p>
             <a href="#">Edit profile</a>
             <a href="#">Producer card</a>
         </section>
@@ -46,7 +45,7 @@
             </form>
 
             <table>
-                <caption>Loops published by <?= htmlspecialchars($producer->getName()) ?></caption>
+                <caption>Loops published by <?= htmlspecialchars($user->getName()) ?></caption>
                 <thead>
                     <tr>
                         <th scope="col">Track &amp; stem title</th>
