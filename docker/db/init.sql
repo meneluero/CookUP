@@ -22,3 +22,18 @@ CREATE TABLE IF NOT EXISTS loops (
 -- indeksy pod filtrowanie po gatunku i sortowanie od najnowszych
 CREATE INDEX IF NOT EXISTS loops_genre_idx ON loops (genre);
 CREATE INDEX IF NOT EXISTS loops_created_at_idx ON loops (created_at DESC);
+
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(120) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    -- wynik password_hash(), nigdy samo hasło; 255 znaków zostawia miejsce na inne algorytmy
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'starter',
+    newsletter BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_role_check CHECK (role IN ('starter', 'pro', 'admin'))
+);
+
+-- jeden e-mail = jedno konto, bez względu na wielkość liter (ostatnia linia obrony przy rejestracji)
+CREATE UNIQUE INDEX IF NOT EXISTS users_email_unique ON users (LOWER(email));
