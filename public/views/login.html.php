@@ -60,7 +60,8 @@
 
                 <?php if ($isRegister): ?>
                     <label for="password-confirmation">Repeat studio key</label>
-                    <input type="password" id="password-confirmation" name="passwordConfirmation" autocomplete="new-password" minlength="8" required>
+                    <input type="password" id="password-confirmation" name="passwordConfirmation" autocomplete="new-password" minlength="8" required
+                           data-match="password" data-mismatch-message="<?= htmlspecialchars($passwordMismatchError) ?>">
 
                     <label>
                         <input type="checkbox" name="newsletter" value="1"<?= !empty($form['newsletter']) ? ' checked' : '' ?>>

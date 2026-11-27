@@ -13,6 +13,8 @@ final class SecurityController extends AppController
     private const MAX_EMAIL_LENGTH = 255;
 
     private const EXPIRED_FORM_ERROR = 'This form has expired. Refresh the page and try again.';
+    // ten sam tekst pokazuje przeglądarka (public/js/forms.js) i serwer
+    private const PASSWORD_MISMATCH_ERROR = 'Passwords do not match.';
 
     public function __construct(private readonly UserRepository $userRepository)
     {
@@ -102,7 +104,7 @@ final class SecurityController extends AppController
             $errors[] = 'Password must have at least ' . self::MIN_PASSWORD_LENGTH . ' characters.';
         }
         if ($password !== $confirmation) {
-            $errors[] = 'Passwords do not match.';
+            $errors[] = self::PASSWORD_MISMATCH_ERROR;
         }
         if ($isEmailValid && $this->userRepository->findByEmail($email) !== null) {
             $errors[] = 'An account with this email already exists.';
@@ -147,6 +149,7 @@ final class SecurityController extends AppController
             'errors' => [],
             'notice' => null,
             'form' => [],
+            'passwordMismatchError' => self::PASSWORD_MISMATCH_ERROR,
         ]);
     }
 }

@@ -23,3 +23,4 @@
 </script>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/theme.js" defer></script>
+<script src="/js/forms.js" defer></script>
