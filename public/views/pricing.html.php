@@ -6,57 +6,65 @@
 <body>
     <?php require __DIR__ . '/partials/header.html.php'; ?>
 
-    <main>
-        <section aria-labelledby="pricing-heading">
-            <p>Upgrade studio access // Tier selection</p>
-            <h1 id="pricing-heading">Engineered for Serious Producers.</h1>
-            <p>Choose the tier that fuels your production pipeline. High-precision stems, lossless 48kHz audio, and priority collaboration designed for peak performance.</p>
+    <main class="page">
+        <div class="page-intro">
+            <h1>Pick your plan</h1>
+            <p>Start for free. Switch to Pro when you need more uploads and lossless downloads.</p>
+        </div>
 
-            <fieldset>
-                <legend>Billing period</legend>
-                <label><input type="radio" name="billing" value="monthly"> Monthly billing</label>
-                <label><input type="radio" name="billing" value="yearly" checked> Yearly billing (save 20%)</label>
-            </fieldset>
-        </section>
+        <?php if ($notice !== null): ?>
+            <p role="status" class="notice"><?= htmlspecialchars($notice) ?></p>
+        <?php endif; ?>
 
         <section aria-labelledby="plans-heading">
             <h2 id="plans-heading">Plans</h2>
-            <?php foreach ($plans as $plan): ?>
-                <article>
-                    <header>
-                        <p><?= htmlspecialchars($plan['tier']) ?><?= $plan['highlighted'] ? ' • Most popular' : '' ?></p>
-                        <h3><?= htmlspecialchars($plan['name']) ?></h3>
-                        <p><data value="<?= htmlspecialchars($plan['price']) ?>"><?= htmlspecialchars($plan['price']) ?></data> / <?= htmlspecialchars($plan['period']) ?></p>
-                        <p><small><?= htmlspecialchars($plan['note']) ?></small></p>
-                    </header>
-                    <p><?= htmlspecialchars($plan['description']) ?></p>
-                    <ul>
-                        <?php foreach ($plan['features'] as $feature): ?>
-                            <li><?= htmlspecialchars($feature) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <?php if ($plan['highlighted']): ?>
-                        <a href="/register"><?= htmlspecialchars($plan['cta']) ?></a>
-                    <?php else: ?>
-                        <button type="button" disabled><?= htmlspecialchars($plan['cta']) ?></button>
-                    <?php endif; ?>
-                </article>
-            <?php endforeach; ?>
+            <div class="plans">
+                <?php foreach ($plans as $plan): ?>
+                    <article class="panel plan<?= $plan['highlighted'] ? ' plan--highlighted' : '' ?>">
+                        <header class="plan-header">
+                            <?php if ($plan['highlighted']): ?>
+                                <p class="plan-badge">Most popular</p>
+                            <?php endif; ?>
+                            <h3><?= htmlspecialchars($plan['name']) ?></h3>
+                            <p class="plan-price"><strong><?= htmlspecialchars($plan['price']) ?></strong> / month</p>
+                            <p class="plan-note"><?= htmlspecialchars($plan['note']) ?></p>
+                        </header>
+
+                        <ul class="plan-features">
+                            <?php foreach ($plan['features'] as $feature): ?>
+                                <li><?= htmlspecialchars($feature) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                        <?php $cta = $plan['cta']; ?>
+                        <?php if ($cta['type'] === 'link'): ?>
+                            <a href="<?= htmlspecialchars($cta['href']) ?>" class="button<?= $plan['highlighted'] ? ' button--primary' : '' ?>"><?= htmlspecialchars($cta['label']) ?></a>
+                        <?php elseif ($cta['type'] === 'upgrade'): ?>
+                            <form action="/pricing/upgrade" method="post">
+                                <input type="hidden" name="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
+                                <button type="submit" class="button button--primary"><?= htmlspecialchars($cta['label']) ?></button>
+                            </form>
+                        <?php else: ?>
+                            <p class="plan-current"><?= htmlspecialchars($cta['label']) ?></p>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </div>
         </section>
 
-        <section aria-labelledby="spec-heading">
-            <h2 id="spec-heading">Full system specification</h2>
-            <table>
-                <caption>Comparison of Starter and Pro Studio features</caption>
+        <section aria-labelledby="compare-heading">
+            <h2 id="compare-heading">Compare plans</h2>
+            <table class="compare-table">
+                <caption class="visually-hidden">Starter and Pro features side by side</caption>
                 <thead>
                     <tr>
-                        <th scope="col">Core specification</th>
+                        <th scope="col">Feature</th>
                         <th scope="col">Starter</th>
-                        <th scope="col">Pro Studio</th>
+                        <th scope="col">Pro</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($specification as $row): ?>
+                    <?php foreach ($comparison as $row): ?>
                         <tr>
                             <th scope="row"><?= htmlspecialchars($row['feature']) ?></th>
                             <td><?= htmlspecialchars($row['starter']) ?></td>
@@ -65,26 +73,6 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </section>
-
-        <section aria-labelledby="guarantees-heading">
-            <h2 id="guarantees-heading">Guarantees</h2>
-            <ul>
-                <li><strong>30-day refund</strong> — zero risk. If it doesn't level up your pipeline, cancel immediately.</li>
-                <li><strong>Instant PDF license</strong> — generated immediately with custom project metadata upon download.</li>
-                <li><strong>Direct stems ZIP</strong> — organized stem folders with BPM and root key metadata embedded.</li>
-                <li><strong>Cancel anytime</strong> — keep all stems and master rights forever, even after cancelation.</li>
-            </ul>
-        </section>
-
-        <section aria-labelledby="faq-heading">
-            <h2 id="faq-heading">Operational questions</h2>
-            <?php foreach ($faq as $item): ?>
-                <details>
-                    <summary><?= htmlspecialchars($item['question']) ?></summary>
-                    <p><?= htmlspecialchars($item['answer']) ?></p>
-                </details>
-            <?php endforeach; ?>
         </section>
     </main>
 

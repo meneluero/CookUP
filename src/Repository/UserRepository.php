@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use PDO;
 use PDOException;
 
@@ -27,6 +28,18 @@ final class UserRepository extends Repository
         $row = $statement->fetch();
 
         return $row === false ? null : $this->mapRowToUser($row);
+    }
+
+    /**
+     * @return list<User>
+     */
+    public function findAll(): array
+    {
+        $statement = $this->connection()->query(
+            'SELECT ' . self::COLUMNS . ' FROM users ORDER BY created_at, id'
+        );
+
+        return array_map($this->mapRowToUser(...), $statement->fetchAll());
     }
 
     public function findByEmail(string $email): ?User
@@ -68,6 +81,22 @@ final class UserRepository extends Repository
         }
 
         return (int) $statement->fetchColumn();
+    }
+
+    public function updateRole(int $id, string $role): void
+    {
+        if (!in_array($role, User::ROLES, true)) {
+            throw new InvalidArgumentException('Unknown role: ' . $role);
+        }
+
+        $statement = $this->connection()->prepare('UPDATE users SET role = :role WHERE id = :id');
+        $statement->execute(['role' => $role, 'id' => $id]);
+    }
+
+    public function delete(int $id): void
+    {
+        $statement = $this->connection()->prepare('DELETE FROM users WHERE id = :id');
+        $statement->execute(['id' => $id]);
     }
 
     /**
