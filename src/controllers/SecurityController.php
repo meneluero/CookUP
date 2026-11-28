@@ -12,7 +12,6 @@ final class SecurityController extends AppController
     private const MAX_NAME_LENGTH = 120;
     private const MAX_EMAIL_LENGTH = 255;
 
-    private const EXPIRED_FORM_ERROR = 'This form has expired. Refresh the page and try again.';
     // ten sam tekst pokazuje przeglądarka (public/js/forms.js) i serwer
     private const PASSWORD_MISMATCH_ERROR = 'Passwords do not match.';
 
@@ -132,10 +131,7 @@ final class SecurityController extends AppController
     public function logout(): void
     {
         // wylogowanie zmienia stan, więc tylko POST z tokenem CSRF
-        if (!$this->isCsrfTokenValid((string) ($_POST['csrfToken'] ?? ''))) {
-            $this->renderError(403, 'Forbidden', self::EXPIRED_FORM_ERROR);
-            return;
-        }
+        $this->requireCsrfToken();
 
         $this->destroySession();
         $this->redirect('/login');

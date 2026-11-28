@@ -17,13 +17,7 @@ final class ProfileController extends AppController
 
     public function index(): void
     {
-        $user = $this->userRepository->find($this->requireLogin());
-
-        // konto usunięte w trakcie sesji - kończymy sesję, żeby nie krążyć między /login a /profile
-        if ($user === null) {
-            $this->destroySession();
-            $this->redirect('/login');
-        }
+        $user = $this->requireUser($this->userRepository);
 
         $this->render('profile', [
             'pageTitle' => $user->getName() . ' | CookUP+',

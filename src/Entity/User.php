@@ -19,6 +19,9 @@ final readonly class User
 
     public const ROLES = [self::ROLE_STARTER, self::ROLE_PRO, self::ROLE_ADMIN];
 
+    // ile pętli może wgrać Starter (Pro i Admin bez limitu)
+    public const STARTER_LOOP_LIMIT = 5;
+
     public function __construct(
         private int $id,
         private string $name,
@@ -57,6 +60,16 @@ final readonly class User
     public function getRole(): string
     {
         return $this->role;
+    }
+
+    public function isStarter(): bool
+    {
+        return $this->role === self::ROLE_STARTER;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
     }
 
     public function wantsNewsletter(): bool

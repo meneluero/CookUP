@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
+
 abstract class AppController
 {
+    protected const EXPIRED_FORM_ERROR = 'This form has expired. Refresh the page and try again.';
+
     protected function render(string $template, array $variables = []): void
     {
         $templatePath = dirname(__DIR__, 2) . '/public/views/' . $template . '.html.php';
@@ -30,7 +35,7 @@ abstract class AppController
         $this->renderError(404, 'Page not found', 'This page does not exist.');
     }
 
-    // wspólna strona błędu (403, 404, 500)
+    // wspólna strona błędu (400, 403, 404, 500)
     protected function renderError(int $statusCode, string $title, string $message): void
     {
         http_response_code($statusCode);
@@ -40,6 +45,12 @@ abstract class AppController
             'statusCode' => $statusCode,
             'message' => $message,
         ]);
+    }
+
+    protected function forbidden(string $message = 'You do not have permission to do this.'): never
+    {
+        $this->renderError(403, 'Forbidden', $message);
+        exit;
     }
 
     protected function isPost(): bool
@@ -72,6 +83,32 @@ abstract class AppController
         return $userId;
     }
 
+    // zalogowany użytkownik pobrany z bazy - rola jest zawsze aktualna, nie z sesji
+    protected function requireUser(UserRepository $userRepository): User
+    {
+        $user = $userRepository->find($this->requireLogin());
+
+        // konto usunięte w trakcie sesji - kończymy sesję, żeby nie krążyć między /login a stroną
+        if ($user === null) {
+            $this->destroySession();
+            $this->redirect('/login');
+        }
+
+        return $user;
+    }
+
+    // gość trafia na logowanie, a zalogowany bez wymaganej roli dostaje 403
+    protected function requireRole(UserRepository $userRepository, string ...$roles): User
+    {
+        $user = $this->requireUser($userRepository);
+
+        if (!in_array($user->getRole(), $roles, true)) {
+            $this->forbidden();
+        }
+
+        return $user;
+    }
+
     protected function csrfToken(): string
     {
         if (empty($_SESSION['csrf_token'])) {
@@ -86,6 +123,14 @@ abstract class AppController
         // hash_equals porównuje w stałym czasie, więc czas odpowiedzi nie zdradza tokenu
         return isset($_SESSION['csrf_token'])
             && hash_equals($_SESSION['csrf_token'], $token);
+    }
+
+    // dla akcji POST bez własnego formularza do ponownego wyświetlenia (wylogowanie, upgrade, panel admina)
+    protected function requireCsrfToken(): void
+    {
+        if (!$this->isCsrfTokenValid((string) ($_POST['csrfToken'] ?? ''))) {
+            $this->forbidden(self::EXPIRED_FORM_ERROR);
+        }
     }
 
     // czyści dane sesji, ciasteczko w przeglądarce i sesję na serwerze
