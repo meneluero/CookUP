@@ -11,6 +11,7 @@ CookUP+ to miejsce dla beatmakerów do wymiany pętli audio i wspólnego tworzen
 - [Flow aplikacji](#flow-aplikacji)
 - [Technologie](#technologie)
 - [Architektura](#architektura)
+- [Routing / endpointy](#routing--endpointy)
 - [Baza danych (ERD)](#baza-danych-erd)
 - [Uruchomienie](#uruchomienie)
 - [Bezpieczeństwo](#bezpieczeństwo)
@@ -74,6 +75,27 @@ Przejście na Pro odbywa się przyciskiem „Upgrade” na stronie Pricing (bez 
 5. `AppController::render()` przekazuje dane do widoku. Widoki korzystają ze wspólnych fragmentów (nagłówek, nawigacja, odtwarzacz).
 6. Gdy żadna trasa nie pasuje, wyświetlany jest widok 404 z kodem odpowiedzi 404.
 
+## Routing / endpointy
+| Metoda | Ścieżka | Dostęp | Opis |
+|---|---|---|---|
+| GET | `/` | wszyscy | strona główna |
+| GET | `/loops` | wszyscy | lista pętli |
+| GET | `/loops/{id}` | wszyscy | szczegóły pętli (404 dla nieistniejącego id) |
+| GET | `/pricing` | wszyscy | plany, przycisk zależy od roli |
+| POST | `/pricing/upgrade` | Starter | zmiana roli na Pro, bez płatności |
+| GET, POST | `/login` | gość | logowanie |
+| GET, POST | `/register` | gość | rejestracja |
+| POST | `/logout` | zalogowany | wylogowanie |
+| GET | `/profile` | zalogowany | profil |
+| GET | `/admin` | Admin | panel admina |
+| POST | `/admin/users/{id}/role` | Admin | zmiana roli (400 dla nieznanej roli) |
+| POST | `/admin/users/{id}/delete` | Admin | usunięcie konta |
+| POST | `/admin/loops/{id}/delete` | Admin | usunięcie pętli |
+
+- Uprawnienia sprawdza serwer na początku każdej akcji. Gość na stronie dla zalogowanych trafia na `/login` (303), a zalogowany bez wymaganej roli dostaje **403**.
+- Rola jest czytana z bazy przy każdym żądaniu, więc zmiana roli w panelu admina działa od razu.
+- Każdy formularz POST wymaga tokenu CSRF (bez niego 403). `{id}` przyjmuje tylko cyfry, a nieistniejące id daje 404.
+
 ## Baza danych (ERD)
 Obecny schemat (PostgreSQL):
 
@@ -121,7 +143,18 @@ docker compose up --build -d
 docker compose exec php composer install
 # przykładowe pętle (dodawane przez aplikację, uruchomienie drugi raz niczego nie dubluje)
 docker compose exec php php scripts/seed-loops.php
+# konta demo, po jednym dla każdej roli (też bez dublowania)
+docker compose exec php php scripts/seed-users.php
 ```
+
+### Konta demo
+Hasło do wszystkich kont: `demo1234`
+
+| Rola | E-mail | Co można pokazać |
+|---|---|---|
+| Starter | `starter@cookup.test` | Upgrade na Pro na stronie Pricing, wejście na `/admin` kończy się 403 |
+| Pro | `pro@cookup.test` | plan Pro oznaczony jako obecny |
+| Admin | `admin@cookup.test` | panel admina (link na profilu): zmiana ról, usuwanie kont i pętli |
 
 Podgląd tabeli w bazie:
 ```bash
