@@ -45,22 +45,27 @@ Obecnie:
 - `src/Database.php` + `config.php` - połączenie PDO z PostgreSQL. Dane logowania z `.env`
   (przez `environment` usługi `php` w `docker-compose.yaml`), połączenie otwierane przy pierwszym zapytaniu.
 - Zależności (repozytoria) tworzymy w `public/index.php` i przekazujemy kontrolerom przez fabryki w `Routing`.
-- Sesja startuje tylko w `public/index.php` (strict mode, ciasteczko HttpOnly + SameSite=Lax).
-  W sesji trzymamy tylko `user_id`, `user_name` i `csrf_token`.
-- `AppController` - wspólne metody: `isPost()`, `redirect()` (303), `requireLogin()`, token CSRF,
-  `destroySession()`. `render()` dodaje do każdego widoku `csrfToken` i `currentUserName`.
-- `SecurityController` - rejestracja, logowanie i wylogowanie (POST + CSRF). Chronione strony
-  wywołują `requireLogin()` na początku akcji (np. `/profile`).
+- Sesja startuje tylko w `public/index.php` (strict mode, ciasteczko HttpOnly + SameSite=Lax,
+  `session_cache_limiter('nocache')` = `Cache-Control: no-store`, więc Wstecz po wylogowaniu nie pokaże strony).
+  W sesji trzymamy tylko `user_id`, `user_name` i `csrf_token`. Roli nie trzymamy w sesji - zawsze czytamy ją z bazy.
+- `AppController` - wspólne metody: `isPost()`, `redirect()` (303), `requireLogin()`, `requireUser()`,
+  `requireRole()` (zła rola = 403), `requireCsrfToken()`, `forbidden()`, `destroySession()`.
+  `render()` dodaje do każdego widoku `csrfToken` i `currentUserName`.
+- `SecurityController` - rejestracja, logowanie i wylogowanie (POST + CSRF). Chronione akcje
+  zaczynają się od `requireUser()` albo `requireRole()` (np. `/profile`, `/admin`).
+- `PricingController` - plany i Upgrade (Starter → Pro, tylko zmiana roli).
+- `AdminController` - panel `/admin`: zmiana roli i usuwanie kont, usuwanie pętli. Admin nie zmienia ani nie usuwa siebie.
 - `src/Data/LoopCatalog.php` - tymczasowe dane testowe (stemy, komentarze), których nie ma jeszcze w bazie.
 - `docker/db/init.sql` - schemat bazy, wykonywany automatycznie przy pierwszym starcie z pustym wolumenem.
   Tam też trafi eksport bazy do `.sql`.
 - `scripts/seed-loops.php` - przykładowe pętle dodawane przez `LoopRepository`.
+- `scripts/seed-users.php` - konta demo (starter, pro, admin; hasło w README).
 - `public/views/` - widoki `*.html.php`, wspólne fragmenty są w `public/views/partials/`.
   Wspólna strona błędów: `error.html.php` (`AppController::renderError()`).
 - `public/css/style.css` - jeden wspólny arkusz, zmienne w `:root`, podejście mobile first.
 - `public/js/` - czysty JS ładowany z `defer` w `partials/head.html.php` (bez `onclick` w HTML,
-  bez `innerHTML` z danymi użytkownika): `theme.js` (motyw), `forms.js` (walidacja w przeglądarce,
-  np. `data-match` dla powtórzenia hasła; teksty komunikatów podaje PHP w atrybutach `data-`).
+  bez `innerHTML` z danymi użytkownika): `theme.js` (motyw), `forms.js` (`data-match` dla powtórzenia
+  hasła, `data-confirm` przed usuwaniem; teksty komunikatów podaje PHP w atrybutach `data-`).
 - `docker/` - Dockerfile dla nginx, php i bazy.
 
 Planowane (jeszcze ich nie ma):
@@ -84,7 +89,7 @@ Planowane (jeszcze ich nie ma):
 ## Uruchamianie i weryfikacja
 - Start (w terminalu WSL, w katalogu projektu): `docker compose up --build -d`
 - Aplikacja: http://localhost:8080, Mailpit: http://localhost:8025 (domyślne porty)
-- Dane przykładowe: `docker compose exec -T php php scripts/seed-loops.php`
+- Dane przykładowe: `docker compose exec -T php php scripts/seed-loops.php` i `scripts/seed-users.php`
 - Baza (psql): `docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'`
 - Sprawdzenie składni: `docker compose exec -T php php -l ścieżka/do/pliku.php`
 - Testy (jak już będą): `docker compose exec -T php vendor/bin/phpunit`
