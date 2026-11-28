@@ -12,6 +12,11 @@
             <h1 id="producer-heading"><?= htmlspecialchars($user->getName()) ?></h1>
             <p><?= htmlspecialchars(ucfirst($user->getRole())) ?> account</p>
             <p>Member since <time datetime="<?= $user->getCreatedAt()->format('Y-m-d') ?>"><?= $user->getCreatedAt()->format('F Y') ?></time></p>
+            <?php if ($user->isAdmin()): ?>
+                <a href="/admin" class="button button--primary">Open admin panel</a>
+            <?php elseif ($user->isStarter()): ?>
+                <a href="/pricing" class="button button--primary">Upgrade to Pro</a>
+            <?php endif; ?>
             <a href="#">Edit profile</a>
             <a href="#">Producer card</a>
         </section>
